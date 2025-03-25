@@ -127,6 +127,243 @@
             <pre v-for="(info, i) in uploadTcpInfo" :key="`info-upload-${i}`">{{ info }}</pre>
         </div>
     </div>
+
+    <div>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th>필드</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td>State</td>
+                <td>TCP 연결의 현재 상태(예: ESTABLISHED, LISTEN 등)</td>
+            </tr>
+            <tr>
+                <td>CaState</td>
+                <td>혼잡 회피(Congestion Avoidance) 알고리즘의 현재 상태</td>
+            </tr>
+            <tr>
+                <td>Retransmits</td>
+                <td>연속 재전송 횟수</td>
+            </tr>
+            <tr>
+                <td>Probes</td>
+                <td>연속 TCP 프로브(zero window probe) 횟수</td>
+            </tr>
+            <tr>
+                <td>Backoff</td>
+                <td>백오프 값(재전송 타이머에 대한 지수 백오프)</td>
+            </tr>
+            <tr>
+                <td>Options</td>
+                <td>TCP 옵션 플래그</td>
+            </tr>
+            <tr>
+                <td>Rto</td>
+                <td>재전송 타임아웃(Retransmission Timeout) 값(us)</td>
+            </tr>
+            <tr>
+                <td>Ato</td>
+                <td>ACK 타임아웃(Acknowledgment Timeout) 값</td>
+            </tr>
+            <tr>
+                <td>SndMss</td>
+                <td>송신 최대 세그먼트 크기(MSS)</td>
+            </tr>
+            <tr>
+                <td>RcvMss</td>
+                <td>수신 최대 세그먼트 크기(MSS)</td>
+            </tr>
+            <tr>
+                <td>Unacked</td>
+                <td>미확인된(ACK 되지 않은) 패킷 수</td>
+            </tr>
+            <tr>
+                <td>Sacked</td>
+                <td>선택적으로 확인된(SACK) 패킷 수</td>
+            </tr>
+            <tr>
+                <td>Lost</td>
+                <td>손실된 것으로 감지된 패킷 수</td>
+            </tr>
+            <tr>
+                <td>Retrans</td>
+                <td>재전송된 패킷 수</td>
+            </tr>
+            <tr>
+                <td>Fackets</td>
+                <td>전방 확인(Forward Acknowledged) 패킷 수</td>
+            </tr>
+            <tr>
+                <td>LastDataSent</td>
+                <td>마지막 데이터 전송 이후 경과 시간(ms)</td>
+            </tr>
+            <tr>
+                <td>LastAckSent</td>
+                <td>마지막 ACK 전송 이후 경과 시간(ms)</td>
+            </tr>
+            <tr>
+                <td>LastDataRecv</td>
+                <td>마지막 데이터 수신 이후 경과 시간(ms)</td>
+            </tr>
+            <tr>
+                <td>LastAckRecv</td>
+                <td>마지막 ACK 수신 이후 경과 시간(ms)</td>
+            </tr>
+            <tr>
+                <td>Pmtu</td>
+                <td>경로 MTU(Maximum Transmission Unit) 값</td>
+            </tr>
+            <tr>
+                <td>RcvSsthresh</td>
+                <td>수신 슬로우 스타트 임계값</td>
+            </tr>
+            <tr>
+                <td>Rtt</td>
+                <td>왕복 시간(Round-Trip Time)(마이크로초)</td>
+            </tr>
+            <tr>
+                <td>Rttvar</td>
+                <td>RTT 변동성(분산)</td>
+            </tr>
+            <tr>
+                <td>SndSsthresh</td>
+                <td>송신 슬로우 스타트 임계값</td>
+            </tr>
+            <tr>
+                <td>SndCwnd</td>
+                <td>혼잡 윈도우(Congestion Window) 크기</td>
+            </tr>
+            <tr>
+                <td>Advmss</td>
+                <td>광고된 MSS(Maximum Segment Size)</td>
+            </tr>
+            <tr>
+                <td>Reordering</td>
+                <td>감지된 재정렬 수준</td>
+            </tr>
+            <tr>
+                <td>RcvRtt</td>
+                <td>수신측 기준 왕복 시간(RTT)</td>
+            </tr>
+            <tr>
+                <td>RcvSpace</td>
+                <td>수신 버퍼 공간</td>
+            </tr>
+            <tr>
+                <td>TotalRetrans</td>
+                <td>연결 전체에 걸친 총 재전송 횟수</td>
+            </tr>
+            <tr>
+                <td>PacingRate</td>
+                <td>현재 패킷 페이싱 속도(bytes/sec)</td>
+            </tr>
+            <tr>
+                <td>MaxPacingRate</td>
+                <td>최대 패킷 페이싱 속도(bytes/sec)</td>
+            </tr>
+            <tr>
+                <td>BytesAcked</td>
+                <td>확인(ACK)된 총 바이트 수</td>
+            </tr>
+            <tr>
+                <td>BytesReceived</td>
+                <td>수신된 총 바이트 수</td>
+            </tr>
+            <tr>
+                <td>SegsOut</td>
+                <td>전송된 총 세그먼트 수</td>
+            </tr>
+            <tr>
+                <td>SegsIn</td>
+                <td>수신된 총 세그먼트 수</td>
+            </tr>
+            <tr>
+                <td>NotsentBytes</td>
+                <td>아직 전송되지 않은 큐에 있는 바이트 수</td>
+            </tr>
+            <tr>
+                <td>MinRtt</td>
+                <td>측정된 최소 RTT 값</td>
+            </tr>
+            <tr>
+                <td>DataSegsIn</td>
+                <td>수신된 데이터 세그먼트 수</td>
+            </tr>
+            <tr>
+                <td>DataSegsOut</td>
+                <td>전송된 데이터 세그먼트 수</td>
+            </tr>
+            <tr>
+                <td>DeliveryRate</td>
+                <td>데이터 전송 속도(bytes/sec)</td>
+            </tr>
+            <tr>
+                <td>BusyTime</td>
+                <td>전송하느라 바쁜 시간(마이크로초)</td>
+            </tr>
+            <tr>
+                <td>RwndLimited</td>
+                <td>수신 윈도우에 의해 제한된 시간</td>
+            </tr>
+            <tr>
+                <td>SndbufLimited</td>
+                <td>송신 버퍼에 의해 제한된 시간</td>
+            </tr>
+            <tr>
+                <td>Delivered</td>
+                <td>전달된 총 패킷 수</td>
+            </tr>
+            <tr>
+                <td>DeliveredCe</td>
+                <td>CE(Congestion Experienced) 표시와 함께 전달된 패킷 수</td>
+            </tr>
+            <tr>
+                <td>BytesSent</td>
+                <td>전송된 총 바이트 수</td>
+            </tr>
+            <tr>
+                <td>BytesRetrans</td>
+                <td>재전송된 총 바이트 수</td>
+            </tr>
+            <tr>
+                <td>DsackDups</td>
+                <td>DSACK(Duplicate SACK)으로 감지된 중복 패킷 수</td>
+            </tr>
+            <tr>
+                <td>ReordSeen</td>
+                <td>감지된 재정렬된 패킷 수</td>
+            </tr>
+            <tr>
+                <td>RcvOoopack</td>
+                <td>수신된 순서가 맞지 않는(Out-of-Order) 패킷 수</td>
+            </tr>
+            <tr>
+                <td>SndWnd</td>
+                <td>송신 윈도우 크기</td>
+            </tr>
+            <tr>
+                <td>RcvWnd</td>
+                <td>수신 윈도우 크기</td>
+            </tr>
+            <tr>
+                <td>Rehash</td>
+                <td>해시 테이블 재해시 횟수</td>
+            </tr>
+            <tr>
+                <td>TotalRto</td>
+                <td>RTO(Retransmission Timeout)로 인한 총 재전송 횟수</td>
+            </tr>
+            <tr>
+                <td>TotalRtoRecoveries</td>
+                <td>RTO 복구 횟수</td>
+            </tr>
+            <tr>
+                <td>TotalRtoTime</td>
+                <td>RTO로 소비된 총 시간</td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <script>
@@ -188,7 +425,7 @@
         this.downloadTcpInfo = []
         let totalSpeed = 0
 
-        const expectedChunkSize = 16*1024*1024;
+        const expectedChunkSize = 16 * 1024 * 1024;
 
         try {
           for (let i = 0; i < this.iteration; i++) {
