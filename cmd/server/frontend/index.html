@@ -90,6 +90,15 @@
             background: #888;
             border-radius: 4px;
         }
+
+        .error-message {
+            color: #ff0000;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #ff0000;
+        }
     </style>
 </head>
 <body>
@@ -112,6 +121,9 @@
         <button class="test-button" @click="startDownloadTest" :disabled="downloadTesting">
             {{ downloadTesting ? 'Testing...' : 'Start Download Test' }}
         </button>
+        <div v-if="downloadError" class="error-message">
+            Error: {{ downloadError }}
+        </div>
         <div class="tcp-info-container">
             <pre v-for="(info, i) in downloadTcpInfo" :key="`info-download-${i}`">{{ info }}</pre>
         </div>
@@ -131,6 +143,9 @@
         <button class="test-button" @click="startUploadTest" :disabled="uploadTesting">
             {{ uploadTesting ? 'Testing...' : 'Start Upload Test' }}
         </button>
+        <div v-if="uploadError" class="error-message">
+            Error: {{ uploadError }}
+        </div>
         <div class="tcp-info-container">
             <pre v-for="(info, i) in uploadTcpInfo" :key="`info-upload-${i}`">{{ info }}</pre>
         </div>
@@ -392,6 +407,8 @@
         uploadTcpInfo: [],
         requestSize: 16,
         downloadTotalRetrans: 0,
+        downloadError: null,
+        uploadError: null,
       }
     },
     mounted() {
@@ -451,13 +468,14 @@
               const {done, value} = await reader.read()
               if (done) break
 
-              if (lastChunk.length + value.length > 4096) {
+              if (value.length >= 4096) {
                 lastChunk = value.slice(-4096)
               } else {
-                const newChunk = new Uint8Array(lastChunk.length + value.length)
-                newChunk.set(lastChunk)
-                newChunk.set(value, lastChunk.length)
-                lastChunk = newChunk
+                const keepSize = 4096 - value.length
+                const keepBuf = lastChunk.slice(-keepSize)
+                lastChunk = new Uint8Array(keepBuf.length + value.length)
+                lastChunk.set(keepBuf, 0)
+                lastChunk.set(value, keepBuf.length)
               }
 
               receivedLength += value.length
@@ -489,6 +507,7 @@
           this.downloadSpeed = totalSpeed / this.iteration
         } catch (error) {
           console.error('Download test failed:', error)
+          this.downloadError = error;
         } finally {
           this.downloadTesting = false
           this.downloadProgress = 100
@@ -531,6 +550,7 @@
 
         } catch (error) {
           console.error('Upload test failed:', error)
+          this.uploadError = error;
         } finally {
           this.uploadTesting = false
           this.uploadProgress = 100
