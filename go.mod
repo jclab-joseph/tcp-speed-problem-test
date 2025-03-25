@@ -1,4 +1,4 @@
-module speed-problem-test-server
+module github.com/jclab-joseph/tcp-speed-problem-test
 
 go 1.24
 

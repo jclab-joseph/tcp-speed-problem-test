@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTTP Speed Test</title>
-    <script src="./js/vue.global.js"></script>
+    <script src="js/vue.global.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,6 +97,11 @@
     <h1>HTTP Speed Test</h1>
 
     <div>
+        <label for="requestSize">Request Size (MB):</label>
+        <input type="number" id="requestSize" v-model="requestSize" min="1" max="128" />
+    </div>
+
+    <div>
         <h2>Download Test</h2>
         <div class="speed-display">
             Download Speed: {{ downloadSpeed.toFixed(2) }} Mbps
@@ -109,6 +114,9 @@
         </button>
         <div class="tcp-info-container">
             <pre v-for="(info, i) in downloadTcpInfo" :key="`info-download-${i}`">{{ info }}</pre>
+        </div>
+        <div>
+            total retrans: {{ downloadTotalRetrans }}
         </div>
     </div>
 
@@ -382,6 +390,8 @@
         uploadProgress: 0,
         downloadTcpInfo: [],
         uploadTcpInfo: [],
+        requestSize: 16,
+        downloadTotalRetrans: 0,
       }
     },
     mounted() {
@@ -423,6 +433,8 @@
         this.downloadSpeed = 0
         this.downloadProgress = 0
         this.downloadTcpInfo = []
+        this.downloadTotalRetrans = 0
+
         let totalSpeed = 0
 
         const expectedChunkSize = 16 * 1024 * 1024;
@@ -430,7 +442,7 @@
         try {
           for (let i = 0; i < this.iteration; i++) {
             const startTime = performance.now()
-            const response = await fetch(`${this.baseUrl}/api/downloading?n=${Math.random()}`)
+            const response = await fetch(`${this.baseUrl}/api/downloading?size=${this.requestSize}&n=${Math.random()}`)
             const reader = response.body.getReader()
             let receivedLength = 0
             let lastChunk = new Uint8Array(0)
@@ -467,6 +479,8 @@
               const footerText = decoder.decode(jsonPart)
               const jsonData = JSON.parse(footerText)
               this.downloadTcpInfo.push(JSON.stringify(jsonData, null, 2))
+
+              this.downloadTotalRetrans += jsonData.totalRetrans;
             }
 
             totalSpeed += this.downloadSpeed
@@ -490,7 +504,7 @@
         let totalSpeed = 0
 
         try {
-          const data = new Uint8Array(16 * 1024 * 1024)
+          const data = new Uint8Array(this.requestSize * 1024 * 1024)
           for (let i = 0; i < data.length; i++) {
             data[i] = Math.floor(Math.random() * 256)
           }

@@ -4,6 +4,7 @@ import (
 	crand "crypto/rand"
 	"embed"
 	"encoding/json"
+	"github.com/jclab-joseph/tcp-speed-problem-test/pkg/tcpinfo"
 	"io/fs"
 	"log"
 	randv2 "math/rand/v2"
@@ -52,12 +53,23 @@ func downloadHandler(w http.ResponseWriter, r *http.Request) {
 	appCtx := GetAppCtx(r.Context())
 	_ = appCtx
 
+	var size int = 16
+	sizeStr := r.URL.Query().Get("size")
+	if sizeStr != "" {
+		n, err := strconv.ParseInt(sizeStr, 10, 32)
+		if err != nil {
+			log.Printf("parse int failed: value=[%s]: %+v", sizeStr, err)
+		} else {
+			size = int(n)
+		}
+	}
+
 	var seed [32]byte
 	_, _ = crand.Read(seed[:])
 	rnd := randv2.NewChaCha8(seed)
 
 	footerSize := 4096
-	dummySize := 16 * 1024 * 1024
+	dummySize := size * 1024 * 1024
 	totalBytes := dummySize + footerSize
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -87,7 +99,7 @@ func downloadHandler(w http.ResponseWriter, r *http.Request) {
 
 	footerBuffer := make([]byte, footerSize)
 
-	tcpInfo, err := GetTcpInfo(appCtx.NativeConn)
+	tcpInfo, err := tcpinfo.GetTcpInfo(appCtx.NativeConn)
 	if err != nil {
 		log.Printf("GetTcpInfo failed: %+v", err)
 	} else {
@@ -127,7 +139,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received %d bytes", totalBytes)
 
 	var sendData []byte
-	tcpInfo, err := GetTcpInfo(appCtx.NativeConn)
+	tcpInfo, err := tcpinfo.GetTcpInfo(appCtx.NativeConn)
 	if err != nil {
 		log.Printf("GetTcpInfo failed: %+v", err)
 	} else {
