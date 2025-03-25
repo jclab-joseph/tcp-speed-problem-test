@@ -4,11 +4,14 @@ import (
 	crand "crypto/rand"
 	"embed"
 	"encoding/json"
+	"flag"
+	"fmt"
 	"github.com/jclab-joseph/tcp-speed-problem-test/pkg/tcpinfo"
 	"io/fs"
 	"log"
 	randv2 "math/rand/v2"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -154,7 +157,24 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(sendData)
 }
 
+func getEnvAsInt(name string, def int) int {
+	v := os.Getenv(name)
+	if v == "" {
+		return def
+	}
+	i, err := strconv.Atoi(v)
+	if err != nil {
+		log.Printf("parse int failed: input=%s: %+v", v, err)
+		return def
+	}
+	return i
+}
+
 func main() {
+	var port int = getEnvAsInt("PORT", 3000)
+	flag.IntVar(&port, "port", port, "listen port")
+	flag.Parse()
+
 	// Create custom server with TCP info collection
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/downloading", downloadHandler)
@@ -170,11 +190,11 @@ func main() {
 	collector := &tcpInfoCollector{handler: mux}
 
 	server := &http.Server{
-		Addr:    ":3000",
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: collector,
 	}
 
-	log.Printf("Server starting on :3000")
+	log.Printf("Server starting on %s", server.Addr)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
