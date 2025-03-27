@@ -111,6 +111,15 @@
     </div>
 
     <div>
+        <h2>QUIC Configuration</h2>
+        <ol>
+           <li>See <a :href="baseUrl + '/api/spki'">{{baseUrl}}/api/spki</a></li>
+            <li>Run chrome as <pre>chrome.exe --enable-quic --origin-to-force-quic-on=localhost:3000 --enable-logging --v=1  --ignore-certificate-errors   --ignore-certificate-errors-spki-list="&lt;SPKI_LIST&gt;"</pre>
+            </li>
+        </ol>
+    </div>
+
+    <div>
         <h2>Download Test</h2>
         <div class="speed-display">
             Download Speed: {{ downloadSpeed.toFixed(2) }} Mbps
@@ -490,15 +499,19 @@
             if (lastChunk.length > 0) {
               const jsonStartCode = '{'.charCodeAt(0)
               const jsonStart = lastChunk.findIndex(v => v === jsonStartCode)
-              const jsonEnd = lastChunk.findIndex((v, i) => i > jsonStart && v === 0)
-              const jsonPart = lastChunk.slice(jsonStart, jsonEnd)
+              if (jsonStart >= 0) {
+                const jsonEnd = lastChunk.findIndex((v, i) => i > jsonStart && v === 0)
+                const jsonPart = lastChunk.slice(jsonStart, jsonEnd)
 
-              const decoder = new TextDecoder()
-              const footerText = decoder.decode(jsonPart)
-              const jsonData = JSON.parse(footerText)
-              this.downloadTcpInfo.push(JSON.stringify(jsonData, null, 2))
+                const decoder = new TextDecoder()
+                const footerText = decoder.decode(jsonPart)
+                const jsonData = JSON.parse(footerText)
+                this.downloadTcpInfo.push(JSON.stringify(jsonData, null, 2))
 
-              this.downloadTotalRetrans += jsonData.totalRetrans;
+                this.downloadTotalRetrans += jsonData.totalRetrans
+              } else {
+                console.log('no json start code')
+              }
             }
 
             totalSpeed += this.downloadSpeed
